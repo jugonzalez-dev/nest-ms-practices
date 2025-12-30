@@ -6,6 +6,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { SsoProviderAdapter } from '@infrastructure/auth/sso-provider.adapter';
 import { JwtStrategy } from '@infrastructure/auth/jwt.strategy';
+import { Auth0JwtGuard } from '@infrastructure/auth/auth0-jwt.guard';
+import { JwtAuthGuard } from '@infrastructure/auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -20,12 +22,14 @@ import { JwtStrategy } from '@infrastructure/auth/jwt.strategy';
   providers: [
     AuthService,
     JwtStrategy,
+    Auth0JwtGuard,
+    JwtAuthGuard,
     {
       provide: 'AuthProviderPort',
       useClass: SsoProviderAdapter,
     },
   ],
-  exports: [AuthService, 'AuthProviderPort'],
+  exports: [AuthService, 'AuthProviderPort', JwtAuthGuard],
 })
 export class AuthModule {}
 

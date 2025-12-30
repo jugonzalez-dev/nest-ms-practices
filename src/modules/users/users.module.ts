@@ -5,6 +5,7 @@ import { UserRepositoryAdapter } from '@infrastructure/persistence/user-reposito
 import { CreateUserUseCase } from '@application/use-cases/users/create-user.use-case';
 import { GetUserUseCase } from '@application/use-cases/users/get-user.use-case';
 import { ListUsersUseCase } from '@application/use-cases/users/list-users.use-case';
+import { SeedService } from '@infrastructure/persistence/seed.service';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { AuthModule } from '../auth/auth.module';
     CreateUserUseCase,
     GetUserUseCase,
     ListUsersUseCase,
+    SeedService,
     {
       provide: 'UserRepositoryPort',
       useClass: UserRepositoryAdapter,

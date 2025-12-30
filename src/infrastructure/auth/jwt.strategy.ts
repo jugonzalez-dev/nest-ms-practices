@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthProviderPort } from '@core/ports/services/auth-provider.port';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly configService: ConfigService,
     @Inject('AuthProviderPort')
@@ -14,29 +14,30 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET') || 'default-jwt-secret',
+      // For Auth0 tokens (RS256), we can't verify with a simple secret
+      // We'll decode without verification and validate in validate()
+      secretOrKey: 'dummy-secret-for-decoding', // Not used for verification
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: any) {
+  async validate(request: any, payload: any) {
     try {
-      // The payload is already decoded from the JWT
-      // If the token comes directly from SSO, validate with the provider
-      // If it's a local JWT, use the payload directly
-      if (payload.token) {
-        const userInfo = await this.authProvider.validateToken(payload.token);
-        return userInfo;
+      // Get the raw token from the Authorization header
+      const authHeader = request.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        throw new UnauthorizedException('Token not found');
       }
 
-      // If the payload already contains user information, return it
-      return {
-        id: payload.sub || payload.id,
-        email: payload.email,
-        name: payload.name,
-        roles: payload.roles || [],
-      };
+      const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+
+      // Validate the token using Auth0 adapter
+      // This decodes the token and extracts user info
+      const userInfo = await this.authProvider.validateToken(token);
+
+      return userInfo;
     } catch (error) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException(`Invalid token: ${error.message}`);
     }
   }
 }
