@@ -2,6 +2,11 @@
 
 Microservice developed with NestJS following Hexagonal Architecture (Ports and Adapters) principles.
 
+<img width="1511" height="785" alt="image" src="https://github.com/user-attachments/assets/76571c9c-dbf3-42bc-ab5a-3320db76a9c4" />
+<img width="1512" height="804" alt="Screenshot 2025-12-30 at 5 13 09 PM" src="https://github.com/user-attachments/assets/ca54c379-e2ed-4bd0-bc25-50895813faa0" />
+<img width="1511" height="341" alt="Screenshot 2025-12-30 at 5 13 23 PM" src="https://github.com/user-attachments/assets/5c0c5c0a-c344-417d-ad58-21a7b824a840" />
+
+
 ## 🏗️ Architecture
 
 This project implements a hexagonal architecture that separates code into three main layers:
